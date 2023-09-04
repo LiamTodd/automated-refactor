@@ -1,7 +1,7 @@
-from src.utils import the_func
+from src.utils import my_func
 
 def main():
-    the_func()
+    my_func()
 
 if __name__ == "__main__":
     main()
