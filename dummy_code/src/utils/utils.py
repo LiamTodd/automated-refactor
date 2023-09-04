@@ -1,4 +1,4 @@
 # the_func is a function
-def util_func(param):
+def the_func(param):
     print(param)
     return param
