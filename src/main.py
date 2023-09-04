@@ -14,13 +14,15 @@ def do_refactor(file_name, old_name, new_name, project, resource):
             raise Exception("Unable to parse code.")
         node_found = False
         for node in ast.walk(tree):
-            if (isinstance(node, ast.Name) and node.id == old_name) or (isinstance(node, ast.FunctionDef) and node.name == old_name):
+            if (isinstance(node, ast.Name) and node.id == old_name) or (isinstance(node, ast.FunctionDef) and node.name == old_name) or (isinstance(node, ast.ClassDef) and node.name == old_name):
                 node_found = True
                 col_offset = node.col_offset
                 line_number = node.lineno
                 index = sum(len(line)+1 for i, line in enumerate(file_contents.splitlines()) if i < line_number - 1) + col_offset
-                if (isinstance(node, ast.FunctionDef) and node.name == old_name):
-                    index += 4 # account for 'def '
+                if (isinstance(node, ast.FunctionDef)):
+                    index += len("def ") # account for 'def '
+                if (isinstance(node, ast.ClassDef)):
+                    index += len("class ")
                 rename_refactor = Rename(project=project, resource=resource, offset=index).get_changes(new_name, docs=True)
                 rename_refactor.do()
                 # only change on occurrence at a time
@@ -28,11 +30,11 @@ def do_refactor(file_name, old_name, new_name, project, resource):
 
 
 def main():
-    old_name = "p"
-    new_name = "my_param"
+    old_name = "my_method_renamed"
+    new_name = "my_method"
 
     root_path = "./dummy_code/src/"
-    file_names = [root_path+"main.py", root_path+"utils/utils.py"]
+    file_names = [root_path+"main.py", root_path+"utils/utils.py", root_path+"my_class.py"]
 
     for file_name in file_names:
         project = Project("./dummy_code", ropefolder=None)
