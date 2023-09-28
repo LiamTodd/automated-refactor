@@ -6,6 +6,7 @@ from pyflakes.reporter import Reporter
 from io import StringIO
 from contextlib import redirect_stderr
 
+
 def rename_functions_in_files(directory, old_function_name, new_function_name):
     modified_files = []
 
@@ -66,15 +67,17 @@ def rename_functions_in_files(directory, old_function_name, new_function_name):
                     content = f.read()
 
                 # Replace old import statements with new ones for functions
-                modified_content = content.replace(f"import {old_function_name}", f"import {new_function_name}")
-                modified_content = modified_content.replace(f"from {old_function_name}", f"from {new_function_name}")
+                modified_content = content.replace(
+                    f"import {old_function_name}", f"import {new_function_name}")
+                modified_content = modified_content.replace(
+                    f"from {old_function_name}", f"from {new_function_name}")
 
                 # If function-related imports were modified, write the updated content back to the file
                 if content != modified_content:
                     with open(file_path, "w") as f:
                         f.write(modified_content)
                     modified_files.append(file_path)
-    
+
     for root, _, files in os.walk(directory):
         for file in files:
             if file.endswith(".py"):
@@ -87,11 +90,14 @@ def rename_functions_in_files(directory, old_function_name, new_function_name):
 
     return modified_files
 
+
 class StreamToList():
     def __init__(self):
         self.stream = []
+
     def write(self, new_item):
         self.stream.append(new_item)
+
 
 def find_undefined_variables(code_str, file_path):
 
@@ -101,7 +107,8 @@ def find_undefined_variables(code_str, file_path):
     # Redirect stderr to capture Pyflakes output
     with redirect_stderr(StringIO()):
         reporter = Reporter(warnings, errors)
-        flakes.check(codeString=code_str, filename=file_path, reporter=reporter)
+        flakes.check(codeString=code_str,
+                     filename=file_path, reporter=reporter)
 
     undefined_names = []
     for warning in warnings.stream:
@@ -110,12 +117,14 @@ def find_undefined_variables(code_str, file_path):
             undefined_names.append(name)
     return undefined_names
 
+
 if __name__ == "__main__":
     directory_to_refactor = "./dummy_code"
     old_name = "greetings"
     new_name = "new_hello"
 
-    modified_files = rename_functions_in_files(directory_to_refactor, old_name, new_name)
+    modified_files = rename_functions_in_files(
+        directory_to_refactor, old_name, new_name)
 
     if modified_files:
         print("Modified files:")

@@ -3,3 +3,5 @@ print(new_hello)
 
 class greeting:
     pass
+
+new_hello
